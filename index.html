@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fempize</title>
+  <link rel="icon" href="https://files.catbox.moe/8mjwws.ico" type="image/x-icon">
+  <style>
+    /* === GLOBAL RESET AND INITIAL STATE === */
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #000; /* Start with black background */
+    }
+
+    /* === STARTUP SCREEN STYLES === */
+    #startup-screen {
+      display: flex; /* Default display for larger screens */
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      width: 100%;
+      color: white;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 200;
+      background-color: #000;
+    }
+
+    #startup-screen .wrapper {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transform: scale(1.2);
+      transform-origin: center center;
+    }
+
+    #startup-screen .sprite {
+      width: 200px;
+      height: 200px;
+      background-image: url('https://files.catbox.moe/w7k7o2.bmp');
+      background-repeat: no-repeat;
+      animation: play 7s steps(105) forwards;
+      margin-bottom: 20px;
+    }
+
+    #startup-screen .text {
+      font-size: 26px;
+      opacity: 0.8;
+      letter-spacing: 0.5px;
+    }
+
+    #startup-screen .copyright {
+      position: absolute;
+      bottom: 30px;
+      left: 0;
+      text-align: center;
+      font-size: 16px;
+      color: #888;
+      opacity: 0.6;
+      width: 100%;
+    }
+
+    @keyframes play {
+      from { background-position: 0 0; }
+      to { background-position: 0 -21000px; }
+    }
+
+    /* === APP SCREEN STYLES (Initially Hidden) === */
+    #app-screen {
+      display: none; /* Hide the app initially */
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-attachment: fixed;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* === WINDOW FRAME === */
+    .window-frame {
+      position: absolute;
+      overflow: hidden;
+      width: 413px;
+      height: 213px;
+      background-image: url('https://files.catbox.moe/lchcwu.png');
+      background-repeat: no-repeat;
+      background-size: contain;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.8));
+      box-shadow: 0 0 18px rgba(0, 0, 0, 0.7);
+      z-index: 10;
+      image-rendering: pixelated;
+      -webkit-image-rendering: pixelated;
+      -moz-image-rendering: pixelated;
+    }
+
+    /* === WINDOW CONTENT AREA === */
+    .window-content {
+      position: absolute;
+      top: 32px;
+      left: 8px;
+      right: 8px;
+      bottom: 8px;
+      background-color: #ffffff;
+      z-index: 2;
+      overflow: auto;
+      padding: 20px;
+      box-sizing: border-box;
+      font-size: 13px;
+      color: #333;
+      border-radius: 3px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    /* === FULLSCREEN OVERLAY (For Window Drag Effect) === */
+    .window-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-repeat: repeat;
+      background-size: auto;
+      background-position: center;
+      z-index: 5;
+      pointer-events: none;
+      image-rendering: pixelated;
+      background-color: transparent;
+    }
+
+    /* === DRAG HANDLE & TITLE === */
+    .drag-handle {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 32px;
+      width: 100%;
+      cursor: move;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      padding-left: 8px;
+      box-sizing: border-box;
+    }
+
+    .window-title {
+      font-size: 13px;
+      color: #ffffff;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+      /* font-weight: bold; */ /* Removed bold weight */
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      pointer-events: none;
+      margin-left: 4px;
+      line-height: 32px;
+    }
+
+    /* === BUTTON CONTAINER === */
+    .window-buttons {
+      position: absolute;
+      top: 1px;
+      right: 7px;
+      display: flex;
+      gap: 0;
+      z-index: 10;
+    }
+
+    /* === WINDOW CONTROL BUTTON RESET === */
+    .btn {
+      display: inline-block;
+      background-color: transparent;
+      border: none;
+      padding: 0;
+      margin: 0;
+      width: auto;
+      height: auto;
+      cursor: pointer;
+      box-sizing: content-box;
+      vertical-align: top;
+      line-height: 0;
+      position: relative;
+      overflow: hidden;
+      outline: none;
+      user-select: none;
+      image-rendering: pixelated;
+      -webkit-image-rendering: pixelated;
+      -moz-image-rendering: pixelated;
+    }
+
+    /* === WINDOW CONTROL BUTTON TEXTURE LAYERS === */
+    .btn::before,
+    .btn::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      background-image: url('https://files.catbox.moe/tmonnk.png');
+      background-repeat: no-repeat;
+      transition: opacity 0.2s ease-out;
+      image-rendering: pixelated;
+      -webkit-image-rendering: pixelated;
+      -moz-image-rendering: pixelated;
+    }
+
+    /* === Specific Window Control Button Styles === */
+    .minimize { width: 30px; height: 21px; }
+    .minimize::before { background-position: 0 0; opacity: 1; }
+    .minimize::after  { background-position: 0 -22px; opacity: 0; }
+    .minimize:hover::before { opacity: 0; }
+    .minimize:hover::after  { opacity: 1; }
+    .minimize:active::before { opacity: 0; }
+    .minimize:active::after { background-position: 0 -44px; opacity: 1; }
+    .minimize:disabled::before { background-position: 0 -63px; opacity: 0.5; }
+    .minimize:disabled::after  { opacity: 0.5; }
+
+    .maximize { width: 29px; height: 21px; }
+    .maximize::before { background-position: -31px 0; opacity: 1; }
+    .maximize::after  { background-position: -31px -22px; opacity: 0; }
+    .maximize:hover::before { opacity: 0; }
+    .maximize:hover::after  { opacity: 1; }
+    .maximize:active::before { opacity: 0; }
+    .maximize:active::after { background-position: -31px -44px; opacity: 1; }
+    .maximize:disabled::before { background-position: -31px -63px; opacity: 0.5; }
+    .maximize:disabled::after  { opacity: 0.5; }
+
+    .close { width: 50px; height: 21px; }
+    .close::before { background-position: -62px 0; opacity: 1; }
+    .close::after  { background-position: -62px -22px; opacity: 0; }
+    .close:hover::before { opacity: 0; }
+    .close:hover::after  { opacity: 1; }
+    .close:active::before { opacity: 0; }
+    .close:active::after { background-position: -62px -44px; opacity: 1; }
+    .close:disabled::before { background-position: -62px -63px; opacity: 0.5; }
+    .close:disabled::after  { opacity: 0.5; }
+
+    /* === Kawaii Download Button Style === */
+    .kawaii-download-button {
+      background: linear-gradient(145deg, #ffc0cb, #ff9a9e);
+      border: 2px solid #ff8fab;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-size: 1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+      margin-top: 15px;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+    }
+    .kawaii-download-button:hover {
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15), 0 3px 5px rgba(0, 0, 0, 0.1);
+      background: linear-gradient(145deg, #ff9a9e, #ffc0cb);
+    }
+    .kawaii-download-button:active {
+      transform: translateY(1px) scale(1);
+      box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.08);
+    }
+
+    /* === Femboy UwU Text Style === */
+    .uwu-text {
+      color: #e896c4;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      font-size: 1.1em;
+      font-weight: normal;
+      margin-bottom: 10px;
+    }
+
+    /* === Media Query for Mobile Devices === */
+    @media (max-width: 767px) {
+      /* Hide the main content containers on small screens */
+      #startup-screen,
+      #app-screen {
+        display: none;
+      }
+      /* Body background is already black, so nothing else needed */
+    }
+
+  </style>
+</head>
+<body>
+
+  <div id="startup-screen">
+    <div class="wrapper">
+      <div class="sprite"></div>
+      <div class="text">Starting Femdows</div>
+    </div>
+    <div class="copyright">&copy; Femsoft Corporation</div>
+  </div>
+
+  <div id="app-screen">
+    <div class="window-frame" id="fempize-window">
+      <div class="drag-handle">
+          <span class="window-title">Fempize</span>
+      </div>
+      <div class="window-buttons">
+        <button class="btn minimize" title="Minimize"></button>
+        <button class="btn maximize" title="Maximize"></button>
+        <button class="btn close" title="Close"></button>
+      </div>
+      <div class="window-content">
+        <p class="uwu-text">download fempize.exe~ uwu</p>
+        <button class="kawaii-download-button" id="downloadButton">
+          Download Now! ♡
+        </button>
+      </div>
+    </div>
+
+    <div class="window-overlay"></div>
+  </div>
+
+
+  <script>
+    const startupScreen = document.getElementById('startup-screen');
+    const appScreen = document.getElementById('app-screen');
+    const fempizeWindow = document.getElementById('fempize-window');
+    const overlay = document.querySelector('#app-screen .window-overlay');
+    const downloadButton = document.getElementById('downloadButton');
+    const bodyElement = document.body;
+    const appBackgroundUrl = 'url("https://files.catbox.moe/ygke9l.jpg")';
+
+    // --- Center Window Function ---
+    function centerWindow(windowElement) {
+        const winWidth = windowElement.offsetWidth;
+        const winHeight = windowElement.offsetHeight;
+        const viewWidth = window.innerWidth;
+        const viewHeight = window.innerHeight;
+
+        let topPos = (viewHeight - winHeight) / 2;
+        let leftPos = (viewWidth - winWidth) / 2;
+
+        topPos = Math.max(10, topPos);
+        leftPos = Math.max(10, leftPos);
+
+        windowElement.style.top = `${topPos}px`;
+        windowElement.style.left = `${leftPos}px`;
+        windowElement.style.transform = 'none';
+    }
+
+    // --- Make Element Draggable Function ---
+    function makeDraggable(windowElement) {
+      const handle = windowElement.querySelector('.drag-handle');
+      let isDragging = false;
+      let offsetX = 0;
+      let offsetY = 0;
+
+      const startDrag = (clientX, clientY) => {
+          const targetElement = document.elementFromPoint(clientX, clientY);
+          if (targetElement && targetElement.closest('.window-buttons')) return;
+
+          isDragging = true;
+          const rect = windowElement.getBoundingClientRect();
+          offsetX = clientX - rect.left;
+          offsetY = clientY - rect.top;
+          document.body.style.userSelect = 'none';
+          handle.style.cursor = 'grabbing';
+          windowElement.style.zIndex = '101';
+          windowElement.style.transform = 'none';
+      };
+
+      const drag = (clientX, clientY) => {
+          if (isDragging) {
+              let newLeft = clientX - offsetX;
+              let newTop = clientY - offsetY;
+              const elemWidth = windowElement.offsetWidth;
+              const elemHeight = windowElement.offsetHeight;
+              const maxLeft = window.innerWidth - elemWidth;
+              const maxTop = window.innerHeight - elemHeight;
+              newLeft = Math.max(0, Math.min(newLeft, maxLeft));
+              newTop = Math.max(0, Math.min(newTop, maxTop));
+              windowElement.style.left = `${newLeft}px`;
+              windowElement.style.top = `${newTop}px`;
+              updateOverlayBackgroundPosition();
+          }
+      };
+
+      const stopDrag = () => {
+          if (isDragging) {
+              isDragging = false;
+              document.body.style.userSelect = '';
+              handle.style.cursor = 'move';
+          }
+      };
+
+      handle.addEventListener('mousedown', (e) => {
+          if (e.target === handle || e.target.classList.contains('window-title')) {
+             startDrag(e.clientX, e.clientY);
+          }
+      });
+      document.addEventListener('mousemove', (e) => drag(e.clientX, e.clientY));
+      document.addEventListener('mouseup', stopDrag);
+
+      handle.addEventListener('touchstart', (e) => {
+          const touchTarget = e.target;
+          if (touchTarget === handle || touchTarget.classList.contains('window-title')) {
+              const touch = e.touches[0];
+              startDrag(touch.clientX, touch.clientY);
+          }
+      }, { passive: true });
+      document.addEventListener('touchmove', (e) => {
+          if (isDragging) {
+              const touch = e.touches[0];
+              drag(touch.clientX, touch.clientY);
+          }
+      }, { passive: true });
+      document.addEventListener('touchend', stopDrag);
+    }
+
+    // --- Setup Window Controls Function ---
+    function setupWindowControls(windowElement) {
+        const minimizeButton = windowElement.querySelector('.minimize');
+        const maximizeButton = windowElement.querySelector('.maximize');
+        const closeButton = windowElement.querySelector('.close');
+
+        // Modified minimize button listener
+        if (minimizeButton && !minimizeButton.disabled) {
+            minimizeButton.addEventListener('click', () => {
+                console.log('Minimize clicked (but does nothing)');
+                // alert('Minimize not implemented.'); // Action removed
+            });
+        }
+        // Modified maximize button listener
+         if (maximizeButton && !maximizeButton.disabled) {
+            maximizeButton.addEventListener('click', () => {
+                console.log('Maximize clicked (but does nothing)');
+                // alert('Maximize not implemented.'); // Action removed
+            });
+        }
+        // Close button listener (already modified)
+        if (closeButton) {
+             closeButton.addEventListener('click', () => {
+                 console.log('Close clicked (but does nothing)');
+                 // windowElement.style.display = 'none'; // Action removed/commented out
+             });
+        }
+    }
+
+    // --- Overlay Background Position Update ---
+    function updateOverlayBackgroundPosition() {
+        if (fempizeWindow.offsetWidth > 0 && fempizeWindow.style.display !== 'none') {
+             const rect = fempizeWindow.getBoundingClientRect();
+             if (overlay) {
+                overlay.style.backgroundPosition = `-${rect.left}px -${rect.top}px`;
+             }
+        }
+    }
+
+    // --- Download Button Functionality (Redirect) ---
+    downloadButton.addEventListener('click', () => {
+        console.log('Download button clicked, redirecting...');
+        window.location.href = 'https://github.com/yaznwin/Femdows/releases/download/Pre-release/fempize.exe';
+    });
+
+    // --- Startup Sequence ---
+    if (window.innerWidth >= 768) { // Only run sequence on larger screens
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                startupScreen.style.display = 'none';
+                bodyElement.style.backgroundColor = '#000';
+
+                setTimeout(() => {
+                    bodyElement.style.backgroundColor = '';
+                    appScreen.style.display = 'flex';
+                    appScreen.style.backgroundImage = appBackgroundUrl;
+
+                    centerWindow(fempizeWindow);
+                    makeDraggable(fempizeWindow);
+                    setupWindowControls(fempizeWindow);
+                    updateOverlayBackgroundPosition();
+
+                    window.addEventListener('resize', () => {
+                        if (fempizeWindow.style.display !== 'none') {
+                            centerWindow(fempizeWindow);
+                            updateOverlayBackgroundPosition();
+                        }
+                    });
+
+                }, 2000); // 2-second delay
+
+            }, 7000); // 7-second delay
+        });
+    } else {
+        console.log("Small screen detected, skipping startup sequence.");
+    }
+
+  </script>
+
+</body>
+</html>
