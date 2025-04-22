@@ -11,7 +11,7 @@
       height: 100%;
       margin: 0;
       padding: 0;
-      overflow: hidden;
+      overflow: hidden; /* Prevent scrollbars */
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #000; /* Start with black background */
     }
@@ -28,7 +28,7 @@
       position: absolute;
       top: 0;
       left: 0;
-      z-index: 200;
+      z-index: 200; /* Ensure it's on top initially */
       background-color: #000;
     }
 
@@ -37,15 +37,16 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      transform: scale(1.2);
+      transform: scale(1.2); /* Slightly enlarge the startup elements */
       transform-origin: center center;
     }
 
     #startup-screen .sprite {
       width: 200px;
       height: 200px;
-      background-image: url('https://files.catbox.moe/w7k7o2.bmp');
+      background-image: url('https://files.catbox.moe/w7k7o2.bmp'); /* Sprite sheet */
       background-repeat: no-repeat;
+      /* Animation using steps to cycle through the sprite sheet */
       animation: play 7s steps(105) forwards;
       margin-bottom: 20px;
     }
@@ -67,9 +68,10 @@
       width: 100%;
     }
 
+    /* Keyframes for the sprite animation */
     @keyframes play {
       from { background-position: 0 0; }
-      to { background-position: 0 -21000px; }
+      to { background-position: 0 -21000px; } /* Moves background up to show frames */
     }
 
     /* === APP SCREEN STYLES (Initially Hidden) === */
@@ -80,53 +82,91 @@
       background-size: cover;
       background-repeat: no-repeat;
       background-position: center;
-      background-attachment: fixed;
-      justify-content: center;
-      align-items: center;
+      background-attachment: fixed; /* Background stays fixed during scroll */
+      position: relative; /* Needed for absolute positioning of windows */
     }
 
     /* === WINDOW FRAME === */
     .window-frame {
-      position: absolute;
-      overflow: hidden;
-      width: 413px;
-      height: 213px;
-      background-image: url('https://files.catbox.moe/lchcwu.png');
+      position: absolute; /* Allows positioning */
+      overflow: hidden; /* Clip content outside the frame */
+      width: 413px; /* Default width */
+      height: 213px; /* Default height for all windows */
+      background-image: url('https://files.catbox.moe/lchcwu.png'); /* Window frame image */
       background-repeat: no-repeat;
-      background-size: contain;
-      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.8));
-      box-shadow: 0 0 18px rgba(0, 0, 0, 0.7);
-      z-index: 10;
+      background-size: contain; /* Scale image to fit */
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.8)); /* Shadow effect */
+      box-shadow: 0 0 18px rgba(0, 0, 0, 0.7); /* Inner shadow */
+      z-index: 10; /* Default window Z-index */
+      /* Pixelated rendering for retro look */
       image-rendering: pixelated;
       -webkit-image-rendering: pixelated;
       -moz-image-rendering: pixelated;
+      /* Initially positioned off-screen or centered by JS */
+      top: -999px; /* Start further offscreen */
+      left: -999px;
     }
+
+     /* Styles for content within #fempize-window-3 */
+    #fempize-window-3 .window-content {
+        justify-content: flex-start; /* Align text to top */
+        text-align: left; /* Align text to left */
+        font-size: 11px; /* Even smaller font to fit more text */
+        padding-top: 10px; /* Adjust top padding */
+        padding-bottom: 10px; /* Adjust bottom padding */
+        padding-left: 15px; /* Adjust left padding */
+        padding-right: 15px; /* Adjust right padding */
+    }
+     #fempize-window-3 .window-content p {
+         margin-bottom: 0.5em; /* Adjust space between paragraphs */
+         line-height: 1.25; /* Adjust line height */
+     }
+     #fempize-window-3 .window-content strong {
+         font-size: 1.1em; /* Make title slightly bigger */
+         display: block; /* Make title block level */
+         margin-bottom: 0.5em; /* Space after title */
+         text-align: center; /* Center the title */
+     }
+     /* Style for the link */
+     #fempize-window-3 .window-content a {
+         color: #0066cc; /* Standard link blue */
+         text-decoration: underline;
+         word-break: break-all; /* Break long URLs */
+     }
+     #fempize-window-3 .window-content a:hover {
+         color: #004080; /* Darker blue on hover */
+     }
+     /* *** NEW STYLE TO CENTER GITHUB LINK PARAGRAPH *** */
+     #fempize-window-3 .github-link-paragraph {
+         text-align: center;
+     }
+
 
     /* === WINDOW CONTENT AREA === */
     .window-content {
       position: absolute;
-      top: 32px;
+      top: 32px; /* Position below title bar */
       left: 8px;
       right: 8px;
       bottom: 8px;
-      background-color: #ffffff;
-      z-index: 2;
-      overflow: auto;
+      background-color: #ffffff; /* White content background */
+      z-index: 2; /* Below title bar elements but above frame background */
+      overflow: auto; /* Add scroll if content overflows */
       padding: 20px;
       box-sizing: border-box;
       font-size: 13px;
-      color: #333;
-      border-radius: 3px;
+      color: #333; /* Dark text color */
+      border-radius: 3px; /* Slightly rounded corners */
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
+      align-items: center; /* Center content horizontally by default */
+      justify-content: center; /* Center content vertically by default */
+      text-align: center; /* Center text by default */
     }
 
     /* === FULLSCREEN OVERLAY (For Window Drag Effect) === */
     .window-overlay {
-      position: fixed;
+      position: fixed; /* Cover the whole viewport */
       top: 0;
       left: 0;
       width: 100%;
@@ -134,10 +174,10 @@
       background-repeat: repeat;
       background-size: auto;
       background-position: center;
-      z-index: 5;
-      pointer-events: none;
-      image-rendering: pixelated;
-      background-color: transparent;
+      z-index: 5; /* Below window frame, above main background */
+      pointer-events: none; /* Allows clicks to pass through */
+      image-rendering: pixelated; /* Match pixelated style */
+      background-color: transparent; /* Invisible */
     }
 
     /* === DRAG HANDLE & TITLE === */
@@ -145,37 +185,36 @@
       position: absolute;
       top: 0;
       left: 0;
-      height: 32px;
+      height: 32px; /* Height of the title bar area */
       width: 100%;
-      cursor: move;
-      z-index: 5;
+      cursor: move; /* Indicate draggability */
+      z-index: 5; /* Above content, below buttons */
       display: flex;
-      align-items: center;
+      align-items: center; /* Vertically center title text */
       padding-left: 8px;
       box-sizing: border-box;
     }
 
     .window-title {
       font-size: 13px;
-      color: #ffffff;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-      /* font-weight: bold; */ /* Removed bold weight */
-      white-space: nowrap;
+      color: #ffffff; /* White title text */
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Text shadow for readability */
+      white-space: nowrap; /* Prevent title wrapping */
       overflow: hidden;
-      text-overflow: ellipsis;
-      pointer-events: none;
+      text-overflow: ellipsis; /* Add '...' if title is too long */
+      pointer-events: none; /* Don't interfere with drag handle */
       margin-left: 4px;
-      line-height: 32px;
+      line-height: 32px; /* Center text vertically in handle */
     }
 
     /* === BUTTON CONTAINER === */
     .window-buttons {
       position: absolute;
-      top: 1px;
-      right: 7px;
+      top: 1px; /* Align with top of the frame graphics */
+      right: 7px; /* Align with right of the frame graphics */
       display: flex;
-      gap: 0;
-      z-index: 10;
+      gap: 0; /* No space between buttons */
+      z-index: 10; /* Buttons on top */
     }
 
     /* === WINDOW CONTROL BUTTON RESET === */
@@ -190,11 +229,11 @@
       cursor: pointer;
       box-sizing: content-box;
       vertical-align: top;
-      line-height: 0;
-      position: relative;
+      line-height: 0; /* Prevent extra space */
+      position: relative; /* For pseudo-elements */
       overflow: hidden;
       outline: none;
-      user-select: none;
+      user-select: none; /* Prevent text selection */
       image-rendering: pixelated;
       -webkit-image-rendering: pixelated;
       -moz-image-rendering: pixelated;
@@ -210,15 +249,16 @@
       display: block;
       width: 100%;
       height: 100%;
-      background-image: url('https://files.catbox.moe/tmonnk.png');
+      background-image: url('https://files.catbox.moe/tmonnk.png'); /* Button sprite sheet */
       background-repeat: no-repeat;
-      transition: opacity 0.2s ease-out;
+      transition: opacity 0.2s ease-out; /* Smooth transition */
       image-rendering: pixelated;
       -webkit-image-rendering: pixelated;
       -moz-image-rendering: pixelated;
     }
 
     /* === Specific Window Control Button Styles === */
+    /* Minimize Button */
     .minimize { width: 30px; height: 21px; }
     .minimize::before { background-position: 0 0; opacity: 1; }
     .minimize::after  { background-position: 0 -22px; opacity: 0; }
@@ -229,6 +269,7 @@
     .minimize:disabled::before { background-position: 0 -63px; opacity: 0.5; }
     .minimize:disabled::after  { opacity: 0.5; }
 
+    /* Maximize Button */
     .maximize { width: 29px; height: 21px; }
     .maximize::before { background-position: -31px 0; opacity: 1; }
     .maximize::after  { background-position: -31px -22px; opacity: 0; }
@@ -239,6 +280,7 @@
     .maximize:disabled::before { background-position: -31px -63px; opacity: 0.5; }
     .maximize:disabled::after  { opacity: 0.5; }
 
+    /* Close Button */
     .close { width: 50px; height: 21px; }
     .close::before { background-position: -62px 0; opacity: 1; }
     .close::after  { background-position: -62px -22px; opacity: 0; }
@@ -251,34 +293,34 @@
 
     /* === Kawaii Download Button Style === */
     .kawaii-download-button {
-      background: linear-gradient(145deg, #ffc0cb, #ff9a9e);
-      border: 2px solid #ff8fab;
+      background: linear-gradient(145deg, #ffc0cb, #ff9a9e); /* Pink gradient */
+      border: 2px solid #ff8fab; /* Slightly darker pink border */
       color: white;
       padding: 10px 20px;
-      border-radius: 20px;
+      border-radius: 20px; /* Rounded corners */
       font-size: 1em;
       font-weight: bold;
       cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease; /* Smooth transitions */
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08); /* Subtle shadow */
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* Text shadow */
       margin-top: 15px;
-      font-family: 'Comic Sans MS', cursive, sans-serif;
+      font-family: 'Comic Sans MS', cursive, sans-serif; /* Fun font */
     }
     .kawaii-download-button:hover {
-      transform: translateY(-2px) scale(1.05);
-      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15), 0 3px 5px rgba(0, 0, 0, 0.1);
-      background: linear-gradient(145deg, #ff9a9e, #ffc0cb);
+      transform: translateY(-2px) scale(1.05); /* Lift and scale on hover */
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15), 0 3px 5px rgba(0, 0, 0, 0.1); /* Enhanced shadow */
+      background: linear-gradient(145deg, #ff9a9e, #ffc0cb); /* Reverse gradient */
     }
     .kawaii-download-button:active {
-      transform: translateY(1px) scale(1);
-      box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.08);
+      transform: translateY(1px) scale(1); /* Push down on click */
+      box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.08); /* Reduced shadow */
     }
 
     /* === Femboy UwU Text Style === */
     .uwu-text {
-      color: #e896c4;
-      font-family: 'Comic Sans MS', cursive, sans-serif;
+      color: #e896c4; /* Pink color */
+      font-family: 'Comic Sans MS', cursive, sans-serif; /* Fun font */
       font-size: 1.1em;
       font-weight: normal;
       margin-bottom: 10px;
@@ -289,9 +331,11 @@
       /* Hide the main content containers on small screens */
       #startup-screen,
       #app-screen {
-        display: none;
+        display: none !important; /* Use !important to override inline styles if necessary */
       }
-      /* Body background is already black, so nothing else needed */
+      body {
+        overflow: auto; /* Allow scrolling if needed on mobile */
+      }
     }
 
   </style>
@@ -303,13 +347,13 @@
       <div class="sprite"></div>
       <div class="text">Starting Femdows</div>
     </div>
-    <div class="copyright">&copy; Femsoft Corporation</div>
+    <div class="copyright">&copy; Femsoft Corporation / Refresh if site isn't loading</div>
   </div>
 
   <div id="app-screen">
-    <div class="window-frame" id="fempize-window">
+    <div class="window-frame" id="fempize-window-1">
       <div class="drag-handle">
-          <span class="window-title">Fempize</span>
+          <span class="window-title">Fempize 1</span>
       </div>
       <div class="window-buttons">
         <button class="btn minimize" title="Minimize"></button>
@@ -318,9 +362,50 @@
       </div>
       <div class="window-content">
         <p class="uwu-text">download fempize.exe~ uwu</p>
-        <button class="kawaii-download-button" id="downloadButton">
-          Download Now! ♡
+        <button class="kawaii-download-button" id="downloadButton1">
+          Download Now ! ♡
         </button>
+      </div>
+    </div>
+
+    <div class="window-frame" id="fempize-window-2">
+      <div class="drag-handle">
+          <span class="window-title">Fempize 2</span>
+      </div>
+      <div class="window-buttons">
+        <button class="btn minimize" title="Minimize"></button>
+        <button class="btn maximize" title="Maximize"></button>
+        <button class="btn close" title="Close"></button>
+      </div>
+      <div class="window-content">
+        <p class="uwu-text">Not sure right now / are you on windows 11 ?</p>
+        <button class="kawaii-download-button" id="downloadButton2">
+          Download the deskthemepack !
+        </button>
+      </div>
+    </div>
+
+    <div class="window-frame" id="fempize-window-3">
+      <div class="drag-handle">
+          <span class="window-title">Important Info</span>
+      </div>
+      <div class="window-buttons">
+        <button class="btn minimize" title="Minimize"></button>
+        <button class="btn maximize" title="Maximize" disabled></button>
+        <button class="btn close" title="Close"></button>
+      </div>
+      <div class="window-content">
+        <strong>Important:</strong>
+        <p>Femdows is a windows transformation pack that only works on windows 10 !</p>
+        <p>It installs programs that make your windows expirience better and changes windows files and registry keys.</p>
+        <p>This project is 2 weeks old and we are working on an uninstall function.</p>
+        <p>If you are on windows 11 or 7 (or anything other than 10) - do NOT install it, things will break a TON. (Install the themepack which doesn't touch anything)</p>
+        <p>But generally femdows is a reliable program, and it creates a restore point before installing.</p>
+        <p>Made with love by Yazn and Micey to cuteify your pc.</p>
+        <p class="github-link-paragraph">
+           If you want to see the source code / the gallery - go on Yazn's GitHub !<br>
+           <a href="https://github.com/yaznwin/Femdows" target="_blank" rel="noopener noreferrer">https://github.com/yaznwin/Femdows</a>
+        </p>
       </div>
     </div>
 
@@ -329,175 +414,329 @@
 
 
   <script>
+    // Get references to key elements
     const startupScreen = document.getElementById('startup-screen');
     const appScreen = document.getElementById('app-screen');
-    const fempizeWindow = document.getElementById('fempize-window');
+    // References for ALL THREE windows
+    const fempizeWindow1 = document.getElementById('fempize-window-1');
+    const fempizeWindow2 = document.getElementById('fempize-window-2');
+    const fempizeWindow3 = document.getElementById('fempize-window-3');
+    const allWindows = [fempizeWindow1, fempizeWindow2, fempizeWindow3]; // Array for easier iteration
     const overlay = document.querySelector('#app-screen .window-overlay');
-    const downloadButton = document.getElementById('downloadButton');
+    // References for download buttons
+    const downloadButton1 = document.getElementById('downloadButton1');
+    const downloadButton2 = document.getElementById('downloadButton2');
     const bodyElement = document.body;
-    const appBackgroundUrl = 'url("https://files.catbox.moe/ygke9l.jpg")';
+    const appBackgroundUrl = 'url("https://files.catbox.moe/ygke9l.jpg")'; // Background image URL
+    let highestZIndex = 10; // To manage window stacking
 
-    // --- Center Window Function ---
-    function centerWindow(windowElement) {
-        const winWidth = windowElement.offsetWidth;
-        const winHeight = windowElement.offsetHeight;
-        const viewWidth = window.innerWidth;
-        const viewHeight = window.innerHeight;
-
-        let topPos = (viewHeight - winHeight) / 2;
-        let leftPos = (viewWidth - winWidth) / 2;
-
-        topPos = Math.max(10, topPos);
-        leftPos = Math.max(10, leftPos);
-
-        windowElement.style.top = `${topPos}px`;
-        windowElement.style.left = `${leftPos}px`;
-        windowElement.style.transform = 'none';
+    // --- Bring Window to Front ---
+    // Increases the z-index of the clicked/dragged window
+    function bringToFront(windowElement) {
+        highestZIndex++;
+        windowElement.style.zIndex = highestZIndex;
     }
 
     // --- Make Element Draggable Function ---
+    // Adds dragging functionality to a window element
     function makeDraggable(windowElement) {
       const handle = windowElement.querySelector('.drag-handle');
       let isDragging = false;
-      let offsetX = 0;
-      let offsetY = 0;
+      let offsetX = 0; // Mouse offset X within the handle
+      let offsetY = 0; // Mouse offset Y within the handle
 
+      // Function to initiate dragging
       const startDrag = (clientX, clientY) => {
           const targetElement = document.elementFromPoint(clientX, clientY);
-          if (targetElement && targetElement.closest('.window-buttons')) return;
+          // Prevent drag if clicking on buttons or disabled maximize button
+          if (targetElement && (targetElement.closest('.window-buttons') || targetElement.closest('.maximize:disabled'))) return;
 
           isDragging = true;
+          bringToFront(windowElement); // Bring this window to the front
           const rect = windowElement.getBoundingClientRect();
-          offsetX = clientX - rect.left;
+          offsetX = clientX - rect.left; // Calculate offset from window edge
           offsetY = clientY - rect.top;
-          document.body.style.userSelect = 'none';
-          handle.style.cursor = 'grabbing';
-          windowElement.style.zIndex = '101';
-          windowElement.style.transform = 'none';
+          document.body.style.userSelect = 'none'; // Disable text selection during drag
+          handle.style.cursor = 'grabbing'; // Change cursor to grabbing
+          windowElement.style.transform = 'none'; // Ensure transform doesn't interfere
       };
 
+      // Function to handle movement during drag
       const drag = (clientX, clientY) => {
           if (isDragging) {
+              // Calculate new potential top-left position
               let newLeft = clientX - offsetX;
               let newTop = clientY - offsetY;
+
+              // Get window dimensions and viewport limits
               const elemWidth = windowElement.offsetWidth;
               const elemHeight = windowElement.offsetHeight;
               const maxLeft = window.innerWidth - elemWidth;
               const maxTop = window.innerHeight - elemHeight;
+
+              // Constrain position within viewport boundaries (0 to max)
               newLeft = Math.max(0, Math.min(newLeft, maxLeft));
               newTop = Math.max(0, Math.min(newTop, maxTop));
+
+              // Apply the constrained position
               windowElement.style.left = `${newLeft}px`;
               windowElement.style.top = `${newTop}px`;
-              updateOverlayBackgroundPosition();
           }
       };
 
+      // Function to stop dragging
       const stopDrag = () => {
           if (isDragging) {
               isDragging = false;
-              document.body.style.userSelect = '';
-              handle.style.cursor = 'move';
+              document.body.style.userSelect = ''; // Re-enable text selection
+              handle.style.cursor = 'move'; // Reset cursor
           }
       };
 
-      handle.addEventListener('mousedown', (e) => {
+      // --- Mouse Event Listeners ---
+      // Bring window to front on any mousedown within the window frame
+      windowElement.addEventListener('mousedown', (e) => {
+          // Prevent drag initiation if clicking on the link inside window 3
+          if (e.target.tagName === 'A' && windowElement.id === 'fempize-window-3') {
+              return;
+          }
+          bringToFront(windowElement);
+          // Start dragging ONLY if mousedown is on the handle or title
           if (e.target === handle || e.target.classList.contains('window-title')) {
-             startDrag(e.clientX, e.clientY);
+              startDrag(e.clientX, e.clientY);
           }
       });
+      // Track mouse movement globally for dragging
       document.addEventListener('mousemove', (e) => drag(e.clientX, e.clientY));
+      // Stop dragging on mouseup globally
       document.addEventListener('mouseup', stopDrag);
 
-      handle.addEventListener('touchstart', (e) => {
-          const touchTarget = e.target;
-          if (touchTarget === handle || touchTarget.classList.contains('window-title')) {
-              const touch = e.touches[0];
-              startDrag(touch.clientX, touch.clientY);
-          }
-      }, { passive: true });
+      // --- Touch Event Listeners ---
+      // Bring window to front on touchstart
+      windowElement.addEventListener('touchstart', (e) => {
+           // Prevent drag initiation if touching the link inside window 3
+           if (e.target.tagName === 'A' && windowElement.id === 'fempize-window-3') {
+               return;
+           }
+           bringToFront(windowElement);
+           const touchTarget = e.target;
+           // Start dragging only if touch is on handle or title
+           if (touchTarget === handle || touchTarget.classList.contains('window-title')) {
+               // Prevent drag if touching buttons
+               const touchedElement = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
+               if (touchedElement && touchedElement.closest('.window-buttons')) return;
+
+               const touch = e.touches[0]; // Get first touch point
+               startDrag(touch.clientX, touch.clientY);
+           }
+      }, { passive: true }); // Use passive for better performance unless preventDefault is needed
+
+      // Track touch movement globally
       document.addEventListener('touchmove', (e) => {
           if (isDragging) {
+              e.preventDefault(); // Prevent scrolling while dragging
               const touch = e.touches[0];
               drag(touch.clientX, touch.clientY);
           }
-      }, { passive: true });
+      }, { passive: false }); // Must be non-passive to call preventDefault
+
+      // Stop dragging on touchend globally
       document.addEventListener('touchend', stopDrag);
     }
 
     // --- Setup Window Controls Function ---
+    // Adds event listeners to minimize, maximize, close, and download buttons
     function setupWindowControls(windowElement) {
         const minimizeButton = windowElement.querySelector('.minimize');
         const maximizeButton = windowElement.querySelector('.maximize');
         const closeButton = windowElement.querySelector('.close');
+        const specificDownloadButton = windowElement.querySelector('.kawaii-download-button'); // Might be null
 
-        // Modified minimize button listener
+        // Minimize button action (currently logs only)
         if (minimizeButton && !minimizeButton.disabled) {
-            minimizeButton.addEventListener('click', () => {
-                console.log('Minimize clicked (but does nothing)');
-                // alert('Minimize not implemented.'); // Action removed
+            minimizeButton.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent triggering parent mousedown/touchstart
+                console.log(`Minimize clicked on ${windowElement.id} (but does nothing)`);
             });
         }
-        // Modified maximize button listener
+        // Maximize button action (currently logs only, if not disabled)
          if (maximizeButton && !maximizeButton.disabled) {
-            maximizeButton.addEventListener('click', () => {
-                console.log('Maximize clicked (but does nothing)');
-                // alert('Maximize not implemented.'); // Action removed
+            maximizeButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                console.log(`Maximize clicked on ${windowElement.id} (but does nothing)`);
             });
         }
-        // Close button listener (already modified)
+        // Close button action (hides the window)
         if (closeButton) {
-             closeButton.addEventListener('click', () => {
-                 console.log('Close clicked (but does nothing)');
-                 // windowElement.style.display = 'none'; // Action removed/commented out
+             closeButton.addEventListener('click', (e) => {
+                 e.stopPropagation();
+                 console.log(`Close clicked on ${windowElement.id}. Hiding window.`);
+                 windowElement.style.display = 'none'; // Hide the specific window
              });
+        }
+
+        // Download Button Functionality (Specific URLs for Window 1 & 2)
+        if (specificDownloadButton) { // Only proceed if a download button exists
+            specificDownloadButton.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent triggering parent listeners
+                console.log(`Download button clicked on ${windowElement.id}, redirecting...`);
+
+                let downloadUrl = '';
+                // Assign URL based on the window ID
+                if (windowElement.id === 'fempize-window-1') {
+                    downloadUrl = 'https://github.com/yaznwin/Femdows/releases/download/Pre-release/fempize.exe';
+                } else if (windowElement.id === 'fempize-window-2') {
+                    downloadUrl = 'https://files.catbox.moe/o3vzm9.deskthemepack';
+                }
+
+                // Redirect if a URL was found
+                if (downloadUrl) {
+                    window.location.href = downloadUrl;
+                } else {
+                    console.error('Could not determine download URL for button in window:', windowElement.id);
+                }
+            });
         }
     }
 
     // --- Overlay Background Position Update ---
+    // Optional function, could be used for visual effects tied to window position
     function updateOverlayBackgroundPosition() {
-        if (fempizeWindow.offsetWidth > 0 && fempizeWindow.style.display !== 'none') {
-             const rect = fempizeWindow.getBoundingClientRect();
-             if (overlay) {
+        // Attempt to find the top-most visible window to track
+        let windowToTrack = null;
+        let maxZ = 0;
+        allWindows.forEach(win => {
+            if (win && win.style.display !== 'none') {
+                const currentZ = parseInt(win.style.zIndex) || 0;
+                if (currentZ > maxZ) {
+                    maxZ = currentZ;
+                    windowToTrack = win;
+                }
+            }
+        });
+        // Fallback to window 1 if no visible window found or z-index issue
+        if (!windowToTrack) windowToTrack = fempizeWindow1;
+
+        if (windowToTrack && windowToTrack.offsetWidth > 0) {
+            const rect = windowToTrack.getBoundingClientRect();
+            if (overlay) {
+                // Example: Adjust overlay background based on window position
                 overlay.style.backgroundPosition = `-${rect.left}px -${rect.top}px`;
-             }
+            }
         }
     }
 
-    // --- Download Button Functionality (Redirect) ---
-    downloadButton.addEventListener('click', () => {
-        console.log('Download button clicked, redirecting...');
-        window.location.href = 'https://github.com/yaznwin/Femdows/releases/download/Pre-release/fempize.exe';
-    });
+    // --- Function to Position Windows on Load/Resize ---
+    // Arranges the windows on the screen according to the desired layout
+    function positionWindows() {
+        const viewWidth = window.innerWidth;
+        const viewHeight = window.innerHeight;
+        const gap = 20; // Gap between windows
+
+        // Use fixed dimensions for calculation robustness if elements aren't rendered yet
+        const winWidth = 413; // Standard width for all
+        const winHeight = 213; // Standard height for all
+
+        // Calculate positions based on image layout
+        // Center the whole group horizontally first
+        const totalWidth = winWidth + gap + winWidth;
+        const groupStartX = (viewWidth - totalWidth) / 2;
+
+        // Center the group vertically (using standard height for calculation)
+        const totalHeight = winHeight + gap + winHeight;
+        const groupStartY = (viewHeight - totalHeight) / 2;
+
+        // Calculate individual window positions
+        const win1X = groupStartX;
+        const win1Y = groupStartY;
+
+        const win2X = win1X + winWidth + gap;
+        const win2Y = groupStartY;
+
+        const win3X = groupStartX;
+        const win3Y = win1Y + winHeight + gap;
+
+
+        // Helper function to apply position and keep within bounds
+        const setPosition = (el, x, y) => {
+            if (!el) return; // Skip if element doesn't exist
+            const elWidth = el.offsetWidth || winWidth; // Use default if offsetWidth is 0
+            const elHeight = el.offsetHeight || winHeight; // Use default if offsetHeight is 0
+            // Ensure position stays within viewport with a 10px margin
+            const finalX = Math.max(10, Math.min(x, viewWidth - elWidth - 10));
+            const finalY = Math.max(10, Math.min(y, viewHeight - elHeight - 10));
+            el.style.left = `${finalX}px`;
+            el.style.top = `${finalY}px`;
+            el.style.transform = 'none'; // Reset transform after positioning
+        };
+
+        // Apply positions to visible windows
+        if (fempizeWindow1 && fempizeWindow1.style.display !== 'none') {
+            setPosition(fempizeWindow1, win1X, win1Y);
+        }
+        if (fempizeWindow2 && fempizeWindow2.style.display !== 'none') {
+            setPosition(fempizeWindow2, win2X, win2Y);
+        }
+        if (fempizeWindow3 && fempizeWindow3.style.display !== 'none') {
+            setPosition(fempizeWindow3, win3X, win3Y);
+        }
+
+        // Set initial stacking order (optional, can be adjusted)
+        bringToFront(fempizeWindow3); // z-index 11
+        bringToFront(fempizeWindow2); // z-index 12
+        bringToFront(fempizeWindow1); // z-index 13 (Window 1 starts on top)
+
+        updateOverlayBackgroundPosition(); // Update overlay based on initial positions
+    }
+
 
     // --- Startup Sequence ---
-    if (window.innerWidth >= 768) { // Only run sequence on larger screens
+    // Runs only on screens wider than 767px
+    if (window.innerWidth >= 768) {
+        // Wait for the page to fully load
         window.addEventListener('load', () => {
+            // Wait for the startup animation (7 seconds)
             setTimeout(() => {
-                startupScreen.style.display = 'none';
-                bodyElement.style.backgroundColor = '#000';
+                startupScreen.style.display = 'none'; // Hide startup screen
+                bodyElement.style.backgroundColor = '#000'; // Show black briefly
 
+                // Wait for a short transition (1 second)
                 setTimeout(() => {
-                    bodyElement.style.backgroundColor = '';
-                    appScreen.style.display = 'flex';
-                    appScreen.style.backgroundImage = appBackgroundUrl;
+                    bodyElement.style.backgroundColor = ''; // Remove black override
+                    appScreen.style.display = 'block'; // Show the main app area
+                    appScreen.style.backgroundImage = appBackgroundUrl; // Set the desktop background
 
-                    centerWindow(fempizeWindow);
-                    makeDraggable(fempizeWindow);
-                    setupWindowControls(fempizeWindow);
-                    updateOverlayBackgroundPosition();
+                    // Ensure windows are visible before positioning if needed
+                    allWindows.forEach(win => {
+                         if (win && win.style.display === 'none') {
+                             // If implementing close/minimize that hides windows,
+                             // ensure they are visible here before positioning.
+                             // win.style.display = 'block'; // Or appropriate display value
+                         }
+                    });
 
-                    window.addEventListener('resize', () => {
-                        if (fempizeWindow.style.display !== 'none') {
-                            centerWindow(fempizeWindow);
-                            updateOverlayBackgroundPosition();
+
+                    // Initialize ALL windows: position, make draggable, setup controls
+                    positionWindows(); // Position windows according to the layout
+
+                    allWindows.forEach(win => {
+                        if (win) { // Check if the window element exists
+                           makeDraggable(win); // Add drag functionality
+                           setupWindowControls(win); // Add button listeners
                         }
                     });
 
-                }, 2000); // 2-second delay
+                    // Add listener to reposition windows on browser resize
+                    window.addEventListener('resize', () => {
+                        positionWindows(); // Reposition all windows
+                    });
 
-            }, 7000); // 7-second delay
+                }, 1000); // 1-second delay after startup animation ends
+
+            }, 7000); // 7-second delay for the startup animation duration
         });
     } else {
+        // Log message for mobile/small screens
         console.log("Small screen detected, skipping startup sequence.");
     }
 
